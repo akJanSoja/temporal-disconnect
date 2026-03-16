@@ -1,0 +1,5 @@
+# Raw dataset files (large)
+data/berka/
+
+# Local scratch space
+.local/

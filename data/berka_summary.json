@@ -1,0 +1,58 @@
+{
+  "total_transactions": 1056320,
+  "total_accounts": 4500,
+  "accounts_with_events": 3247,
+  "pct_accounts_with_events": 72,
+  "avg_window_days": 104,
+  "overall_avg_amount": 7249,
+  "naive_segment_changes": 2.79,
+  "stages": [
+    {
+      "stage": "Stage 0: Pre-signal",
+      "transaction_count": 4541,
+      "avg_amount": 1588,
+      "total_amount": 7210669
+    },
+    {
+      "stage": "Stage 1: Initiation",
+      "transaction_count": 12762,
+      "avg_amount": 11045,
+      "total_amount": 140957870
+    },
+    {
+      "stage": "Stage 2: Active",
+      "transaction_count": 10772,
+      "avg_amount": 9640,
+      "total_amount": 103841231
+    },
+    {
+      "stage": "Stage 3: Normalization",
+      "transaction_count": 12139,
+      "avg_amount": 10920,
+      "total_amount": 132559385
+    }
+  ],
+  "stage_comparison": [
+    {
+      "stage": "Stage 0: Pre-signal",
+      "avg_amount": 1588,
+      "pct_of_overall": 22
+    },
+    {
+      "stage": "Stage 1: Initiation",
+      "avg_amount": 11045,
+      "pct_of_overall": 152
+    },
+    {
+      "stage": "Stage 2: Active",
+      "avg_amount": 9640,
+      "pct_of_overall": 133
+    },
+    {
+      "stage": "Stage 3: Normalization",
+      "avg_amount": 10920,
+      "pct_of_overall": 151
+    }
+  ],
+  "note": "Berka dataset. Anchors: PRIJEM type, amount > 10000 CZK, non-recurring. Window: -30d to +90d from first anchor per account."
+}
