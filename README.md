@@ -5,6 +5,18 @@
 
 ---
 
+## TL;DR
+
+A family books a ski trip in November. The trip happens in February.
+For 103 days, every related purchase — gear, pharmacy, ski passes,
+restaurants — looks like unrelated noise to a naive model. Temporal
+Disconnect is the framework that connects them: one event, four stages,
+predictable arc. Validated on 1M+ transactions (Berka dataset), where
+72% of accounts show the same pattern and naive segmentation churns
+2.8× per account. The fix is not more data — it is a different question.
+
+---
+
 ## The Problem
 
 Most transaction models ask: *when did money move?*
