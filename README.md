@@ -49,18 +49,50 @@ A model that accounts for Temporal Disconnect will:
 
 ---
 
-## The Three-Transaction Example
+## The Sportlov Example
 
-| Date    | Transaction        | Category        | Naive label      |
-|---------|--------------------|-----------------|------------------|
-| March   | Jewelry store      | Retail          | Gift?            |
-| April   | Event venue        | Entertainment   | Party?           |
-| June    | Hawaii flights     | Travel          | Vacation         |
+The Lindqvist family booked a ski trip on **November 3rd**.
+The trip happened **February 14–19th**. That is **103 days** between
+the decision and the event.
 
-Individually: noise.
-Sequentially, with category awareness: **engagement → wedding planning → honeymoon**.
+| Date        | Transaction                            | Naive label      | TD-aware label                |
+|-------------|----------------------------------------|------------------|-------------------------------|
+| 3 Nov       | Resia.se — 4 flights Arlanda–Mora      | Travel           | Stage 1 — Initiation (anchor) |
+| 18 Nov      | Stadium — ski jackets ×2, helmets      | Sporting goods   | Stage 1 — Core spend          |
+| 2 Dec       | Apoteket — sunscreen, blister plasters | Health & pharmacy| Stage 1 — Cascade spend       |
+| 9 Jan       | Stadium — ski boots rental pre-order   | Sporting goods   | Stage 2 — Core spend          |
+| 14 Feb      | Ski-pass Lindvallen, 4 pers × 6 days  | Leisure          | Stage 2 — Core spend          |
+| 14–19 Feb   | Restaurants in Sälen × 8 txns          | Food & beverage  | Stage 2 — Cascade spend       |
+| 19 Feb      | Apotek Hjärtat — ibuprofen, knee support | Health         | Stage 3 — Cascade spend       |
+| 2 Mar       | Fotoboken.se — photobook               | Other retail     | Stage 3 — Normalization       |
 
-One life event. Three months. Three data points that only make sense together.
+A naive model sees 8 transactions across 6 categories over 4 months.
+A TD-aware model sees **one event, four stages, and a predictable arc**.
+
+---
+
+## Berka Dataset Validation
+
+The framework was validated against the Czech banking Berka dataset
+(1,056,320 transactions across 4,500 accounts).
+
+**Key findings:**
+
+- **72%** of accounts contain detectable event patterns
+- Pre-signal spend is **78% below** the overall average — the quiet
+  before the event is itself a detectable pattern
+- Initiation spend spikes to **152% of baseline** — the anchor
+  transaction creates a measurable step change
+- Naive segmentation churns **2.8× per account** — without event
+  context, the same customer lands in a different quartile almost
+  every month
+- Average event window: **104 days** of structurally misframed data
+  per account
+
+Anchors: high-value (>10,000 CZK), non-recurring credit transactions.
+Window: −30 to +90 days from first anchor per account.
+
+See `analyze_berka.py` for the full extraction script (requires DuckDB).
 
 ---
 
@@ -70,8 +102,8 @@ One life event. Three months. Three data points that only make sense together.
 Anchor transactions are high-signal, low-frequency purchases that
 typically mark the *start* of a life event.
 
-Examples: jewelry, fertility clinics, real estate agents,
-moving companies, baby specialty stores.
+Examples: flight bookings, ski pass purchases, real estate agents,
+moving companies, equipment rental.
 
 ### Step 2 — Build event windows
 For each anchor transaction, define a lookback and lookahead window.
@@ -84,8 +116,8 @@ Event window = [anchor_date - T_before, anchor_date + T_after]
 
 Typical starting points (financial data):
 - Short events (job change, travel): T = 30–60 days
-- Medium events (moving, new baby): T = 90–180 days
-- Long events (divorce, retirement): T = 180–365 days
+- Medium events (moving, sports holiday): T = 90–180 days
+- Long events (retirement, major renovation): T = 180–365 days
 
 ### Step 3 — Classify transactions within the window
 Within each event window, reclassify transactions by their
@@ -156,6 +188,18 @@ DAX is not suited for row-context temporal lookups at scale.
 
 ---
 
+## Scaling
+
+- **Partitioning**: Partition by `account_id` so each event window
+  is computed independently. No cross-account joins needed.
+- **Delta Lake / Fabric**: Stage classification as a medallion layer.
+  Bronze = raw transactions, Silver = anchor-detected,
+  Gold = stage-labeled.
+- **Spark**: The window join is embarrassingly parallel per account.
+  Broadcast the anchor table, partition transactions by account.
+
+---
+
 ## Limitations and Open Questions
 
 - **Window calibration** requires labeled ground truth or
@@ -163,11 +207,23 @@ DAX is not suited for row-context temporal lookups at scale.
 - **Sparse customers** (few transactions per month) produce
   unreliable event detection.
 - **Multi-event overlap** (customer is simultaneously moving
-  and having a child) requires disambiguation logic.
+  and planning a holiday) requires disambiguation logic.
 - **Privacy and regulation**: event-level inference from
   transaction data has GDPR implications in Sweden/EU.
   Model outputs should be aggregate or anonymized unless
   explicit consent exists.
+
+---
+
+## Demo Site
+
+Open `index.html` in a browser to see the interactive demo, including:
+- Toggle between naive and TD-aware transaction views
+- Live DuckDB-WASM SQL query
+- Berka dataset validation with Chart.js visualizations
+- Naive vs TD comparison and insight callout
+
+To run locally: `python -m http.server 8080` and open `http://localhost:8080`.
 
 ---
 
@@ -185,5 +241,5 @@ and what decisions the model can support.
 
 ---
 
-*Framework version 1.0 — March 2026*
+*Framework version 1.1 — March 2026*
 *Feedback and forks welcome.*
