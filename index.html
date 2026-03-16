@@ -879,6 +879,16 @@
       background: var(--bg-card);
       color: var(--text);
     }
+    .tryit-entity-warn {
+      display: none;
+      font-size: 0.8rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      background: #FFF7ED;
+      border: 1px solid #F59E0B;
+      color: #92400E;
+      margin-top: 0.25rem;
+    }
     .tryit-hint {
       font-size: 0.82rem;
       color: var(--text-muted);
@@ -1689,7 +1699,8 @@ staged <span class="kw">AS</span> (
     <div id="tryit-mapping" class="tryit-card" style="display:none">
       <h3>Map your columns</h3>
       <div class="tryit-mapping-grid">
-        <label>Entity column<select id="tryit-entity"></select></label>
+        <label>Entity column<select id="tryit-entity" onchange="onEntityChange()"></select>
+          <div id="tryit-entity-warn" class="tryit-entity-warn"></div></label>
         <label>Date column<select id="tryit-date"></select></label>
         <label>Category column<select id="tryit-category" onchange="onCategoryChange()"></select></label>
         <label>Value column <span>(optional)</span><select id="tryit-value"></select></label>
@@ -2113,6 +2124,7 @@ async function runDuckDB() {
 // ── CSV Analyzer ("Try it") ──────────────────────────────
 let csvRawText = null;
 let tryitChartInstance = null;
+let csvColAnalysis = null; // cached column analysis for entity quality checks
 
 function showTryitError(msg) {
   const el = document.getElementById('tryit-error');
@@ -2199,6 +2211,8 @@ function parseCSVPreview() {
     };
   });
 
+  csvColAnalysis = analysis;
+
   // Auto-select best guesses
   const pick = (filter, sort) => {
     const f = analysis.filter(filter);
@@ -2235,8 +2249,29 @@ function parseCSVPreview() {
   document.getElementById('tryit-preview').style.display = 'block';
   document.getElementById('tryit-mapping').style.display = 'block';
   document.getElementById('tryit-clear-wrap').style.display = 'block';
+  if (guessEntity) onEntityChange();
   if (guessCat) {
     document.getElementById('tryit-category').dispatchEvent(new Event('change'));
+  }
+}
+
+function onEntityChange() {
+  const warn = document.getElementById('tryit-entity-warn');
+  const entName = document.getElementById('tryit-entity').value;
+  if (!entName || !csvColAnalysis) { warn.style.display = 'none'; return; }
+
+  const col = csvColAnalysis.find(c => c.name === entName);
+  if (!col) { warn.style.display = 'none'; return; }
+
+  if (col.ratio > 0.8) {
+    // High uniqueness — likely a transaction ID, not a grouping entity
+    warn.textContent = 'This column has ' + Math.round(col.ratio * 100) + '% unique values '
+      + '(' + col.uniqCount + ' unique across rows). '
+      + 'Entity columns should group multiple transactions — like a customer ID or account number. '
+      + 'This looks more like a transaction ID or description.';
+    warn.style.display = 'block';
+  } else {
+    warn.style.display = 'none';
   }
 }
 
@@ -2470,6 +2505,8 @@ async function clearUploadedData() {
   try { if (conn) await conn.query('DROP TABLE IF EXISTS uploaded_data'); } catch (_) {}
   try { if (db) await db.dropFile('uploaded.csv'); } catch (_) {}
   csvRawText = null;
+  csvColAnalysis = null;
+  document.getElementById('tryit-entity-warn').style.display = 'none';
   document.getElementById('tryit-upload').style.display = 'block';
   document.getElementById('tryit-preview').style.display = 'none';
   document.getElementById('tryit-mapping').style.display = 'none';
