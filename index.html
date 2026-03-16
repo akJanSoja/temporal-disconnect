@@ -729,6 +729,76 @@
     }
     .usecase-cta:hover { color: var(--accent-dark); text-decoration: none; }
 
+    /* ── Industries Section ───────────────────────────────────── */
+    .industries-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .industry-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .industry-block-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .industry-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .industry-block[data-cat="fraud"] .industry-badge { background: #FCEBEB; color: #A32D2D; }
+    .industry-block[data-cat="churn"] .industry-badge { background: #FAEEDA; color: #854F0B; }
+    .industry-block[data-cat="supply"] .industry-badge { background: #E1F5EE; color: #0F6E56; }
+    .industry-block[data-cat="marketing"] .industry-badge { background: #E6F1FB; color: #185FA5; }
+    .industry-block[data-cat="fraud"] { border-top: 4px solid #ef4444; }
+    .industry-block[data-cat="churn"] { border-top: 4px solid #f59e0b; }
+    .industry-block[data-cat="supply"] { border-top: 4px solid #14b8a6; }
+    .industry-block[data-cat="marketing"] { border-top: 4px solid #2563eb; }
+    .industry-block-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+    .industry-examples {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .industry-examples li {
+      padding: 0.85rem 1.5rem;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .industry-examples li:last-child { border-bottom: none; }
+    .industry-examples li:hover { background: var(--bg-alt); }
+    .industry-examples li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .industries-closing {
+      text-align: center;
+      max-width: 750px;
+      margin: 2.5rem auto 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
     /* ── Scale Section ────────────────────────────────────────── */
     .scale-grid {
       display: grid;
@@ -792,6 +862,7 @@
       .dual-panel { grid-template-columns: 1fr; }
       .scale-grid { grid-template-columns: 1fr; }
       .usecases-grid { grid-template-columns: 1fr; }
+      .industries-grid { grid-template-columns: 1fr; }
       nav .nav-links { gap: 1rem; }
     }
     @media (max-width: 480px) {
@@ -815,6 +886,7 @@
       <a href="#sql">SQL Pattern</a>
       <a href="#impact">Impact</a>
       <a href="#usecases">Use Cases</a>
+      <a href="#industries">Industries</a>
       <a href="#scale">Scale</a>
     </div>
   </div>
@@ -1286,6 +1358,84 @@ staged <span class="kw">AS</span> (
          and the data continues to reflect it after the decision has been acted on. Modeling the event rather
          than the transaction is not a feature addition. It is a different question.</p>
       <a href="https://github.com/akJanSoja/temporal-disconnect" target="_blank" rel="noopener" class="usecase-cta">&rarr; Read the full framework on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Industries ───────────────────────────────────────────── -->
+<section id="industries">
+  <div class="container-wide">
+    <h2>Who Benefits from Temporal Disconnect Analysis</h2>
+    <p>Temporal Disconnect is not a banking concept or a retail concept. It appears in any dataset where
+       a decision precedes its transactions &mdash; or where behavior continues after the event that caused it.
+       Below are twenty organisations across four domains where applying the framework produces
+       a measurable analytical advantage.</p>
+
+    <div class="industries-grid">
+
+      <!-- Fraud & abuse detection -->
+      <div class="industry-block" data-cat="fraud">
+        <div class="industry-block-header">
+          <span class="industry-badge">Fraud &amp; abuse detection</span>
+        </div>
+        <ul class="industry-examples">
+          <li><strong>Banks &amp; card issuers</strong> &mdash; Card-testing sequences leave a pre-signal pattern of small, low-risk transactions at new merchants before a large fraudulent purchase is attempted. The fraud event is Stage 2. The detectable window opens at Stage 0.</li>
+          <li><strong>Grocery retailers</strong> &mdash; Loyalty discount abuse follows a temporal arc. Customers gaming promotional windows split baskets, time purchases to activation dates, and cluster spend around campaign periods in ways that are invisible transaction-by-transaction but obvious as an event sequence.</li>
+          <li><strong>B2B distributors</strong> &mdash; Salespeople offering discounts in a pattern correlated with quota periods rather than customer negotiation is a TD signal finance teams rarely model. The anchor is the quota deadline. The pre-signal is the discount pattern in the 30 days before it.</li>
+          <li><strong>Insurance companies</strong> &mdash; Fraudulent claims are rarely isolated. Policyholder behavior in the 60&ndash;90 days before a claim &mdash; new coverages added, valuation inquiries, address changes &mdash; forms a detectable pre-signal stage that a naive claims model never sees.</li>
+          <li><strong>E-commerce platforms</strong> &mdash; Return abuse follows a buy &rarr; use &rarr; return sequence clustered around identifiable events: concerts, weddings, job interviews. Each return looks legitimate in isolation. As an event window, the pattern is structural and repeatable.</li>
+        </ul>
+      </div>
+
+      <!-- Churn & retention -->
+      <div class="industry-block" data-cat="churn">
+        <div class="industry-block-header">
+          <span class="industry-badge">Churn &amp; retention</span>
+        </div>
+        <ul class="industry-examples">
+          <li><strong>Grocery chains (ICA, Coop, Axfood)</strong> &mdash; Basket migration to a competitor begins 8&ndash;12 weeks before a loyalty card goes dormant. Category breadth contracts first &mdash; fewer departments per visit &mdash; then visit frequency drops. By the time spend falls, the customer has already decided.</li>
+          <li><strong>Telecom operators</strong> &mdash; A data usage drop combined with an increase in support contacts is a pre-churn Stage 0 signal that appears reliably 60 days before a port-out request. Intervening at Stage 1 costs a fraction of winning the customer back after they have left.</li>
+          <li><strong>SaaS companies</strong> &mdash; Feature usage contraction precedes cancellation by a predictable arc. Users stop using advanced or collaborative features first, then revert to core functions only, then go dark. Each step is a stage. The cancellation is Stage 3. The recoverable window is Stage 0&ndash;1.</li>
+          <li><strong>Fuel card providers (B2B)</strong> &mdash; A fleet customer reducing fill frequency and shifting to spot purchases rather than contracted volume is in Stage 0 of a supplier switch. The contract renewal conversation is Stage 3. TD moves that conversation to Stage 1.</li>
+          <li><strong>Gyms &amp; fitness brands</strong> &mdash; Attendance decline follows a consistent six-week pre-churn arc before a membership lapses. Class booking drops before visit frequency drops. Visit frequency drops before the membership is cancelled. Each step is measurable and actionable.</li>
+        </ul>
+      </div>
+
+      <!-- Supply chain & B2B procurement -->
+      <div class="industry-block" data-cat="supply">
+        <div class="industry-block-header">
+          <span class="industry-badge">Supply chain &amp; B2B procurement</span>
+        </div>
+        <ul class="industry-examples">
+          <li><strong>Industrial distributors (W&uuml;rth, Ahlsell)</strong> &mdash; A customer placing small trial orders of a new product category is in Stage 0 of a strategic volume decision. The anchor is the first category-crossing order. By the time volume arrives, a TD-aware account manager has already had the conversation.</li>
+          <li><strong>Food manufacturers</strong> &mdash; Retailer order patterns ahead of seasonal campaigns are predictable event windows. Orders ramp 10&ndash;14 weeks before a campaign launch, peak during the campaign, and normalize over 4&ndash;6 weeks afterward. Capacity planning that ignores this window is reacting to Stage 2 data.</li>
+          <li><strong>Pharma wholesalers</strong> &mdash; Hospital purchasing shifts in category mix and order size before a contract renewal signal switching intent. A TD model on procurement data surfaces this 90&ndash;120 days before the tender &mdash; when retention is still possible.</li>
+          <li><strong>Construction material suppliers</strong> &mdash; Project-driven procurement follows a multi-stage event window that can span 6&ndash;18 months. The anchor is often a permit application or architectural order. The cascade &mdash; structural materials, finishing materials, fixtures &mdash; is entirely predictable if the anchor is detected early.</li>
+          <li><strong>Auto parts distributors</strong> &mdash; Workshop order patterns shift before a fleet tender. Test orders in new categories precede volume by 4&ndash;8 weeks. A naive model sees low-value orders. A TD-aware model sees a customer in Stage 1 of a supplier evaluation.</li>
+        </ul>
+      </div>
+
+      <!-- Marketing & personalisation -->
+      <div class="industry-block" data-cat="marketing">
+        <div class="industry-block-header">
+          <span class="industry-badge">Marketing &amp; personalisation</span>
+        </div>
+        <ul class="industry-examples">
+          <li><strong>Department stores (&Aring;hl&eacute;ns, NK)</strong> &mdash; Life events activate distinct category sequences. A new baby, a move, a wedding each produce a recognisable spend arc across 3&ndash;6 months. Customers in Stage 1 are the highest-value targets for personalised campaigns &mdash; and the easiest to over-communicate to if the stage is not modelled correctly.</li>
+          <li><strong>DIY retailers (Byggmax, Hornbach)</strong> &mdash; Renovation events have a clear anchor &mdash; a large lumber or tool purchase &mdash; and a long cascade of finishing spend: paint, fixtures, lighting, d&eacute;cor. The cascade continues for months after the anchor and is entirely predictable in category sequence.</li>
+          <li><strong>Travel agencies &amp; OTAs</strong> &mdash; The booking date is the anchor. Everything that follows &mdash; luggage, travel insurance, currency exchange, airport parking, destination activities &mdash; is Stage 1&ndash;2 spend that is predictable to the day relative to the departure date. Campaigns timed to the event stage outperform campaigns timed to the calendar.</li>
+          <li><strong>Car dealers &amp; leasing companies</strong> &mdash; The pre-purchase research phase leaves spend signals 3&ndash;6 months before a vehicle purchase: driving school top-ups, parking apps, fuel stops in new locations, insurance comparison sites. The anchor &mdash; the purchase &mdash; comes last. TD moves the commercial conversation earlier.</li>
+          <li><strong>Streaming &amp; media (Spotify, Netflix)</strong> &mdash; Content consumption patterns shift before a subscription change. Users about to upgrade consume more content in more categories. Users about to downgrade narrow their consumption to one or two genres. Both are Stage 0 signals with measurable commercial responses.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="industries-closing">
+      <p>In every case above, the underlying data is accurate. The transactions are timestamped correctly.
+         The problem is not data quality &mdash; it is that timestamps record when money moved, not what was happening.
+         Temporal Disconnect gives every transaction a second dimension: not just <em>when</em>, but <em>where in the arc</em>
+         of a human or commercial decision.</p>
     </div>
   </div>
 </section>
