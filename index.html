@@ -633,6 +633,102 @@
       font-weight: 600;
     }
 
+    /* ── Use Cases Section ────────────────────────────────────── */
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .usecase-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      border-top: 4px solid var(--border);
+    }
+    .usecase-card[data-domain="fraud"] { border-top-color: #ef4444; }
+    .usecase-card[data-domain="churn"] { border-top-color: #f59e0b; }
+    .usecase-card[data-domain="supply"] { border-top-color: #14b8a6; }
+    .usecase-card[data-domain="marketing"] { border-top-color: #2563eb; }
+    .usecase-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+      color: white;
+    }
+    .usecase-card[data-domain="fraud"] .usecase-badge { background: #ef4444; }
+    .usecase-card[data-domain="churn"] .usecase-badge { background: #f59e0b; color: #1a1a2e; }
+    .usecase-card[data-domain="supply"] .usecase-badge { background: #14b8a6; }
+    .usecase-card[data-domain="marketing"] .usecase-badge { background: #2563eb; }
+    .usecase-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+    .usecase-card > p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .usecase-card h4 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .usecase-card ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+    .usecase-card ul li {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      padding-left: 1rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+      line-height: 1.45;
+    }
+    .usecase-card ul li::before {
+      content: '\2013';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+    .usecase-example {
+      background: var(--bg-alt);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .usecase-example strong { font-weight: 600; }
+    .usecase-closing {
+      text-align: center;
+      max-width: 700px;
+      margin: 2.5rem auto 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .usecase-cta {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--accent);
+      transition: color 0.2s;
+    }
+    .usecase-cta:hover { color: var(--accent-dark); text-decoration: none; }
+
     /* ── Scale Section ────────────────────────────────────────── */
     .scale-grid {
       display: grid;
@@ -695,6 +791,7 @@
       .impact-stats { grid-template-columns: 1fr; }
       .dual-panel { grid-template-columns: 1fr; }
       .scale-grid { grid-template-columns: 1fr; }
+      .usecases-grid { grid-template-columns: 1fr; }
       nav .nav-links { gap: 1rem; }
     }
     @media (max-width: 480px) {
@@ -717,6 +814,7 @@
       <a href="#model">Data Model</a>
       <a href="#sql">SQL Pattern</a>
       <a href="#impact">Impact</a>
+      <a href="#usecases">Use Cases</a>
       <a href="#scale">Scale</a>
     </div>
   </div>
@@ -1077,6 +1175,117 @@ staged <span class="kw">AS</span> (
         <p>Broadcast the anchor table if &lt;&thinsp;1&thinsp;GB. Handle skewed customers
            (high transaction volume) with salted joins.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Use Cases ────────────────────────────────────────────── -->
+<section id="usecases">
+  <div class="container">
+    <h2>Use Cases in Practice</h2>
+    <p>Temporal Disconnect is domain-agnostic. Any dataset where behavior precedes or extends beyond
+       the timestamps that record it contains this structure. Below are four domains where applying
+       the framework produces measurable analytical lift.</p>
+
+    <div class="usecases-grid">
+
+      <!-- Card 1: Fraud Detection -->
+      <div class="usecase-card" data-domain="fraud">
+        <span class="usecase-badge">Fraud detection</span>
+        <h3>Detect the Ramp-Up, Not the Loss</h3>
+        <p>Fraud rarely happens in isolation. A fraudulent account typically shows a behavioral ramp-up
+           before the fraud event &mdash; small test transactions, category shifts, velocity changes.
+           A naive model flags the fraud after the fact. A TD-aware model detects the pre-signal stage
+           and scores the account before the loss occurs.</p>
+        <h4>What changes</h4>
+        <ul>
+          <li>Detect account takeover from Stage 0 pre-signal: login pattern changes, small test charges, new merchant categories</li>
+          <li>Separate legitimate life-event spend spikes (moving, travel) from anomalous spikes &mdash; reducing false positive rates dramatically</li>
+          <li>Score transactions not just on amount and category but on where in an event window they fall &mdash; a large transaction in Stage 2 of a detected travel event is expected; the same transaction with no event context is suspicious</li>
+          <li>Early intervention: flag accounts in Stage 1 of an anomalous pattern rather than waiting for Stage 2 peak</li>
+        </ul>
+        <div class="usecase-example">
+          <strong>Example:</strong> An account makes three small transactions at a new electronics merchant (Stage 0 pre-signal),
+          then a large transfer to a new payee (Stage 1 anchor), then rapid cash withdrawals across three days (Stage 2 active).
+          A naive model sees three unrelated events. TD sees a card-testing &rarr; takeover &rarr; cashout sequence.
+        </div>
+      </div>
+
+      <!-- Card 2: Customer LTV & Churn -->
+      <div class="usecase-card" data-domain="churn">
+        <span class="usecase-badge">Churn &amp; LTV</span>
+        <h3>Churn Starts 60 Days Before Cancellation</h3>
+        <p>Churn does not happen on the day a customer cancels. It begins 60&ndash;90 days earlier as a behavioral
+           shift &mdash; reduced engagement, category contraction, spend migration to competitors.
+           The cancellation is Stage 3. The detectable signal is Stage 0.</p>
+        <h4>What changes</h4>
+        <ul>
+          <li>Identify pre-churn Stage 0 signal: declining transaction frequency, shrinking category breadth, first use of a competitor merchant</li>
+          <li>Trigger retention interventions at Stage 1, not after cancellation</li>
+          <li>Build LTV models on event-adjusted spend &mdash; a customer in the middle of a moving event has temporarily suppressed spend, not permanently reduced LTV</li>
+          <li>Distinguish life-event churn (customer moved abroad, genuinely left) from competitive churn (customer is still there but spending elsewhere)</li>
+        </ul>
+        <div class="usecase-example">
+          <strong>Example:</strong> A customer&rsquo;s monthly grocery spend drops 40% over two months.
+          Naive model: LTV decline, possible churn risk. TD model: anchor detected &mdash; first transaction
+          at a new supermarket chain two months ago. Customer moved neighborhoods. Not a churn signal.
+          A retention campaign here wastes budget and annoys the customer.
+        </div>
+      </div>
+
+      <!-- Card 3: Retail & Supply Chain -->
+      <div class="usecase-card" data-domain="supply">
+        <span class="usecase-badge">Supply chain</span>
+        <h3>The Decision Precedes the Order</h3>
+        <p>B2B procurement follows the same event-window structure as consumer spend. A buyer&rsquo;s decision
+           to switch supplier, ramp production, or enter a new market generates a predictable sequence
+           of purchase orders across weeks or months. The decision precedes the transaction data by the entire lead time.</p>
+        <h4>What changes</h4>
+        <ul>
+          <li>Detect supplier switching in Stage 0 before the first competitive order is placed &mdash; signals: RFQ activity, sample orders, logistics inquiries</li>
+          <li>Forecast seasonal demand surges from Stage 1 initiation signals rather than waiting for Stage 2 peak orders to arrive</li>
+          <li>Identify customers building strategic inventory vs. steady-state ordering &mdash; they look identical in a naive model but require different account management</li>
+          <li>Route capacity planning decisions earlier by detecting event windows across the customer base simultaneously</li>
+        </ul>
+        <div class="usecase-example">
+          <strong>Example:</strong> A distributor notices a mid-size customer placing small orders of a new product
+          category in Q1. Naive model: minor upsell opportunity. TD model: Stage 0 pre-signal of a product line
+          expansion. By Q3, that customer&rsquo;s order volume has tripled. Sales had the data in Q1.
+        </div>
+      </div>
+
+      <!-- Card 4: Marketing & Segmentation -->
+      <div class="usecase-card" data-domain="marketing">
+        <span class="usecase-badge">Marketing</span>
+        <h3>Same Transaction, Different Context</h3>
+        <p>Segment instability is expensive &mdash; customers churn between segments month to month,
+           making targeting inconsistent and ROI hard to measure. The root cause is that naive segments
+           are based on timestamped spend, not on the life event that drives it. A customer buying
+           baby furniture is not in the &ldquo;home &amp; garden&rdquo; segment. They are in Stage 2
+           of a new baby event.</p>
+        <h4>What changes</h4>
+        <ul>
+          <li>Segment by event type + event stage rather than spend category</li>
+          <li>Campaign timing: reach customers in Stage 1 (initiation) when they are actively deciding, not Stage 2 (active) when they have already committed</li>
+          <li>Reduce segment churn: a customer stays in the same event-stage segment for the duration of their window &mdash; 60&ndash;180 days of stable targeting instead of monthly reshuffling</li>
+          <li>Personalization: tailor messaging to stage, not just category. Stage 1 messaging: help them decide. Stage 3 messaging: help them wind down and transition to the next normal</li>
+        </ul>
+        <div class="usecase-example">
+          <strong>Example:</strong> Two customers both spend 8&thinsp;000 kr at Stadium in the same week.
+          Customer A: no event context detected &mdash; standard sporting goods segment.
+          Customer B: anchor detected 6 weeks ago &mdash; multi-passenger flight booking, children&rsquo;s ski gear.
+          Customer B is in Stage 2 of a family sports holiday. Same transaction, completely different context,
+          completely different next best action.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="usecase-closing">
+      <p>In each domain, the underlying mechanism is the same: a decision is made before the data reflects it,
+         and the data continues to reflect it after the decision has been acted on. Modeling the event rather
+         than the transaction is not a feature addition. It is a different question.</p>
+      <a href="https://github.com/akJanSoja/temporal-disconnect" target="_blank" rel="noopener" class="usecase-cta">&rarr; Read the full framework on GitHub</a>
     </div>
   </div>
 </section>
