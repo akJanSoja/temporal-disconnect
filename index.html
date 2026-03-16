@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <!-- DuckDB-WASM loaded via dynamic import() in initDuckDB() -->
+  <!-- CSP: blocks outbound data connections. connect-src allows self + CDN only (needed for DuckDB WASM binary fetch). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com blob:; connect-src 'self' https://cdn.jsdelivr.net; form-action 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; worker-src blob:;">
   <style>
     /* ── Reset & Base ───────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -799,6 +801,210 @@
       line-height: 1.6;
     }
 
+    /* ── Try It Section ───────────────────────────────────────── */
+    .tryit-privacy {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #E1F5EE;
+      color: #0F6E56;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .tryit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .tryit-card h3 { margin-bottom: 1rem; }
+    .tryit-security-line {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .tryit-dropzone {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tryit-dropzone:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .tryit-dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .tryit-dropzone p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    .tryit-mapping-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .tryit-mapping-grid label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .tryit-mapping-grid label span {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .tryit-mapping-grid select,
+    #tryit-anchor {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: var(--bg-card);
+      color: var(--text);
+    }
+    .tryit-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .tryit-error {
+      background: #FCEBEB;
+      color: #A32D2D;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .tryit-notice {
+      background: #E1F5EE;
+      color: #0F6E56;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 1rem;
+    }
+    .tryit-verdict {
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    .tryit-verdict.detected {
+      background: #E1F5EE;
+      color: #0F6E56;
+      border: 2px solid #14b8a6;
+    }
+    .tryit-verdict.weak {
+      background: #FAEEDA;
+      color: #854F0B;
+      border: 2px solid #f59e0b;
+    }
+    .tryit-verdict.none {
+      background: #FCEBEB;
+      color: #A32D2D;
+      border: 2px solid #ef4444;
+    }
+    .tryit-results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tryit-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tryit-retry-btn {
+      padding: 0.6rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--bg-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tryit-retry-btn:hover { background: var(--border); }
+    .tryit-clear-btn {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: #FCEBEB;
+      color: #A32D2D;
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tryit-clear-btn:hover { background: #f8d4d4; }
+    .tryit-details {
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .tryit-details summary {
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: var(--bg-card);
+      list-style: none;
+    }
+    .tryit-details summary::-webkit-details-marker { display: none; }
+    .tryit-details summary::before { content: '\25B8 '; color: var(--accent); }
+    .tryit-details[open] summary::before { content: '\25BE '; }
+    .tryit-details > div {
+      padding: 0.75rem 1.25rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+    }
+    #tryit-categories table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    #tryit-categories th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+    }
+    #tryit-categories td {
+      padding: 0.4rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
     /* ── Scale Section ────────────────────────────────────────── */
     .scale-grid {
       display: grid;
@@ -863,6 +1069,7 @@
       .scale-grid { grid-template-columns: 1fr; }
       .usecases-grid { grid-template-columns: 1fr; }
       .industries-grid { grid-template-columns: 1fr; }
+      .tryit-results-grid { grid-template-columns: 1fr; }
       nav .nav-links { gap: 1rem; }
     }
     @media (max-width: 480px) {
@@ -870,6 +1077,7 @@
       .timeline-toggle { max-width: 100%; }
       .berka-metrics { grid-template-columns: 1fr; }
       .berka-comparison { grid-template-columns: 1fr; }
+      .tryit-mapping-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -888,6 +1096,7 @@
       <a href="#usecases">Use Cases</a>
       <a href="#industries">Industries</a>
       <a href="#scale">Scale</a>
+      <a href="#tryit">Try it</a>
     </div>
   </div>
 </nav>
@@ -1440,6 +1649,126 @@ staged <span class="kw">AS</span> (
   </div>
 </section>
 
+<!-- ── Try It ──────────────────────────────────────────────── -->
+<section id="tryit">
+  <div class="container">
+    <h2>Test the Thesis with Your Own Data</h2>
+    <p>The patterns shown in this demo were detected in public datasets. But Temporal Disconnect is a structural
+       property &mdash; it either exists in your data or it does not.</p>
+    <p>Upload a CSV with transaction-like data, pick the category you think acts as an anchor, and see whether
+       the surrounding transactions form a recognisable arc. You make the analytical call. The tool shows what follows from it.</p>
+
+    <div class="tryit-privacy">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Processed in your browser &mdash; never uploaded
+    </div>
+
+    <div id="tryit-clear-wrap" style="display:none">
+      <button onclick="clearUploadedData()" class="tryit-clear-btn">&times; Clear data</button>
+    </div>
+
+    <div id="tryit-notice" class="tryit-notice" style="display:none"></div>
+
+    <!-- Step 1: Upload -->
+    <div id="tryit-upload" class="tryit-card">
+      <p class="tryit-security-line">Your data is read into memory, analysed, and discarded when you clear it or close this tab.
+         Nothing is stored. Nothing is transmitted.</p>
+      <div class="tryit-dropzone" id="tryit-dropzone">
+        <input type="file" accept=".csv" id="tryit-file" onchange="handleCSVUpload(event)">
+        <p>Drop a .csv file here or click to browse</p>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div id="tryit-preview" class="tryit-card" style="display:none">
+      <h3>Preview</h3>
+      <div class="duckdb-output" id="tryit-preview-table"></div>
+    </div>
+
+    <!-- Step 2: Map columns -->
+    <div id="tryit-mapping" class="tryit-card" style="display:none">
+      <h3>Map your columns</h3>
+      <div class="tryit-mapping-grid">
+        <label>Entity column<select id="tryit-entity"></select></label>
+        <label>Date column<select id="tryit-date"></select></label>
+        <label>Category column<select id="tryit-category" onchange="onCategoryChange()"></select></label>
+        <label>Value column <span>(optional)</span><select id="tryit-value"></select></label>
+      </div>
+      <p class="tryit-hint">Entity is the unit you want to track &mdash; a customer ID, account number, or any identifier
+         that appears multiple times. Category is what groups the transactions &mdash; merchant type, product category, department.</p>
+    </div>
+
+    <!-- Step 3: Pick anchor -->
+    <div id="tryit-anchor-step" class="tryit-card" style="display:none">
+      <h3>Pick an anchor category</h3>
+      <p style="font-size:0.88rem;">Which category do you think marks the start of a significant event? This is your anchor.
+         The analysis will look for patterns in the transactions before and after it &mdash; per entity.</p>
+      <select id="tryit-anchor" style="margin-bottom:0.75rem;"></select>
+      <p class="tryit-hint">Good anchors are low-frequency, high-signal categories &mdash; the purchase that changes what comes next.</p>
+      <button class="run-btn" id="tryit-run" onclick="runCSVAnalysis()" style="margin-top:1rem;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run analysis
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div id="tryit-error" class="tryit-error" style="display:none"></div>
+
+    <!-- Results -->
+    <div id="tryit-results" style="display:none">
+      <div id="tryit-verdict" class="tryit-verdict"></div>
+      <div class="tryit-results-grid">
+        <div class="tryit-card">
+          <h3>Stage Distribution</h3>
+          <div class="berka-chart-wrap"><canvas id="tryitChart"></canvas></div>
+        </div>
+        <div class="tryit-card">
+          <h3>What Appeared Around Your Anchor</h3>
+          <div id="tryit-categories"></div>
+          <p class="tryit-hint">These categories cluster around your anchor. If TD is present, different categories should
+             dominate different stages &mdash; not the same categories appearing evenly across all.</p>
+        </div>
+      </div>
+      <div class="tryit-actions">
+        <button onclick="tryitResetToAnchor()" class="tryit-retry-btn">&#8634; Try a different anchor</button>
+        <a href="https://github.com/akJanSoja/temporal-disconnect" target="_blank" rel="noopener" class="usecase-cta">&rarr; Want to implement this? Read the full framework</a>
+      </div>
+    </div>
+
+    <!-- Collapsibles -->
+    <details class="tryit-details" style="margin-top:2rem;">
+      <summary>What kind of data works well</summary>
+      <div>
+        <ul style="padding-left:1.25rem; margin:0.5rem 0;">
+          <li>At least 100 rows</li>
+          <li>At least 10 unique entities (customers, accounts, orders)</li>
+          <li>A date column</li>
+          <li>A category column with 5&ndash;30 unique values</li>
+          <li>One category you suspect acts as a behavioural anchor</li>
+        </ul>
+        <p style="margin-top:0.75rem; margin-bottom:0.25rem;"><strong>Works well:</strong> order history exports, loyalty card data, CRM activity logs, support ticket logs, procurement records.</p>
+        <p style="margin-bottom:0;"><strong>Works poorly:</strong> aggregated monthly reports, single-entity data, fewer than 5 category values.</p>
+      </div>
+    </details>
+    <details class="tryit-details">
+      <summary>How do we know this is private?</summary>
+      <div>
+        <p><strong>You can verify this yourself.</strong></p>
+        <ol style="padding-left:1.25rem; margin:0.5rem 0;">
+          <li>Open your browser&rsquo;s Developer Tools (F12)</li>
+          <li>Go to the Network tab</li>
+          <li>Upload a CSV file</li>
+          <li>Observe: zero network requests are generated by the upload or the analysis. The only requests visible are the initial page load resources (scripts, styles).</li>
+        </ol>
+        <p style="margin-top:0.75rem;">This works because the analysis runs in DuckDB-WASM &mdash; a database engine compiled to WebAssembly
+           that runs entirely inside your browser tab. Your file never reaches a server because no server is involved.</p>
+        <p style="margin-bottom:0;">The Content Security Policy on this page additionally restricts outbound data connections at the browser level,
+           making it technically impossible for any script to transmit your data to an external server.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
 <!-- ── Footer ───────────────────────────────────────────────── -->
 <footer>
   <div class="container">
@@ -1448,6 +1777,11 @@ staged <span class="kw">AS</span> (
       <a href="https://github.com/akJanSoja/temporal-disconnect" target="_blank" rel="noopener">GitHub Repository</a>
     </div>
     <p style="margin-top:1rem; font-size:0.78rem;">Framework v1.0 &mdash; March 2026</p>
+    <p style="margin-top:0.5rem; font-size:0.72rem; max-width:600px; margin-left:auto; margin-right:auto;">
+      The &ldquo;Try it&rdquo; feature processes no personal data on any server. All analysis is client-side.
+      This site sets no cookies and collects no analytics. GDPR does not apply to in-browser processing
+      that does not leave the user&rsquo;s device.
+    </p>
   </div>
 </footer>
 
@@ -1775,6 +2109,390 @@ async function runDuckDB() {
 
   btn.disabled = false;
 }
+
+// ── CSV Analyzer ("Try it") ──────────────────────────────
+let csvRawText = null;
+let tryitChartInstance = null;
+
+function showTryitError(msg) {
+  const el = document.getElementById('tryit-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
+
+function showTryitNotice(msg) {
+  const el = document.getElementById('tryit-notice');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+function detectDelimiter(line) {
+  let best = ',', max = 0;
+  for (const d of [',', ';', '\t', '|']) {
+    const n = line.split(d).length;
+    if (n > max) { max = n; best = d; }
+  }
+  return best;
+}
+
+function stripQuotes(s) {
+  return s.trim().replace(/^["']|["']$/g, '');
+}
+
+function handleCSVUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) {
+    if (!confirm('Large file (' + (file.size / 1024 / 1024).toFixed(1) + ' MB) \u2014 processing happens in your browser and may take a moment. Continue?')) {
+      event.target.value = '';
+      return;
+    }
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    csvRawText = e.target.result;
+    parseCSVPreview();
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVPreview() {
+  const lines = csvRawText.split('\n').filter(l => l.trim());
+  if (lines.length < 2) { showTryitError('File has fewer than 2 rows.'); return; }
+
+  const delim = detectDelimiter(lines[0]);
+  const headers = lines[0].split(delim).map(stripQuotes);
+  const allRows = lines.slice(1).map(l => l.split(delim).map(stripQuotes));
+  const preview = allRows.slice(0, 5);
+
+  // Preview table
+  let html = '<table><tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+  for (const r of preview) html += '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>';
+  html += '</table>';
+  if (allRows.length > 5) {
+    html += '<p style="font-size:0.78rem;color:var(--text-muted);margin-top:0.5rem">' + allRows.length + ' rows total \u2014 showing first 5</p>';
+  }
+  document.getElementById('tryit-preview-table').innerHTML = html;
+
+  // Column type detection
+  const analysis = headers.map((h, i) => {
+    const vals = allRows.map(r => r[i]).filter(v => v !== undefined && v !== '');
+    const sample = vals.slice(0, 200);
+    let dates = 0, nums = 0;
+    for (const v of sample) {
+      if (!isNaN(Date.parse(v)) && v.length > 4) dates++;
+      if (!isNaN(parseFloat(v.replace(/[, ]/g, ''))) && v.trim() !== '') nums++;
+    }
+    const sLen = sample.length || 1;
+    const uniq = new Set(vals);
+    const total = vals.length || 1;
+    return {
+      name: h,
+      isDate: dates / sLen > 0.8,
+      isNum: nums / sLen > 0.8,
+      isCat: uniq.size < total * 0.5 && uniq.size > 1,
+      isEntity: uniq.size / total < 0.2 && uniq.size > 1,
+      uniqCount: uniq.size,
+      ratio: uniq.size / total
+    };
+  });
+
+  // Auto-select best guesses
+  const pick = (filter, sort) => {
+    const f = analysis.filter(filter);
+    return f.length ? f.sort(sort)[0] : null;
+  };
+  const guessEntity = pick(c => c.isEntity, (a, b) => a.ratio - b.ratio)
+    || pick(c => !c.isDate && !c.isNum, () => 0);
+  const guessDate = pick(c => c.isDate, () => 0);
+  const guessCat = pick(
+    c => c.isCat && (!guessEntity || c.name !== guessEntity.name),
+    (a, b) => Math.abs(Math.log(a.uniqCount / 15)) - Math.abs(Math.log(b.uniqCount / 15))
+  ) || pick(c => !c.isDate && !c.isNum && (!guessEntity || c.name !== guessEntity.name), () => 0);
+  const guessVal = pick(c => c.isNum, () => 0);
+
+  // Populate dropdowns
+  const ids = ['tryit-entity', 'tryit-date', 'tryit-category', 'tryit-value'];
+  const defs = [guessEntity, guessDate, guessCat, guessVal];
+  ids.forEach((id, i) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = i === 3
+      ? '<option value="">(none \u2014 use count)</option>'
+      : '<option value="">\u2014 select \u2014</option>';
+    headers.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = h;
+      if (defs[i] && defs[i].name === h) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+
+  // Show steps
+  document.getElementById('tryit-upload').style.display = 'none';
+  document.getElementById('tryit-preview').style.display = 'block';
+  document.getElementById('tryit-mapping').style.display = 'block';
+  document.getElementById('tryit-clear-wrap').style.display = 'block';
+  if (guessCat) {
+    document.getElementById('tryit-category').dispatchEvent(new Event('change'));
+  }
+}
+
+function onCategoryChange() {
+  const catName = document.getElementById('tryit-category').value;
+  if (!catName) {
+    document.getElementById('tryit-anchor-step').style.display = 'none';
+    return;
+  }
+  const lines = csvRawText.split('\n').filter(l => l.trim());
+  const delim = detectDelimiter(lines[0]);
+  const headers = lines[0].split(delim).map(stripQuotes);
+  const catIdx = headers.indexOf(catName);
+  const vals = new Set();
+  for (let i = 1; i < lines.length; i++) {
+    const c = lines[i].split(delim)[catIdx];
+    if (c) vals.add(stripQuotes(c));
+  }
+  const sel = document.getElementById('tryit-anchor');
+  sel.innerHTML = '<option value="">\u2014 select anchor category \u2014</option>';
+  [...vals].sort().forEach(v => {
+    const o = document.createElement('option');
+    o.value = v;
+    o.textContent = v;
+    sel.appendChild(o);
+  });
+  document.getElementById('tryit-anchor-step').style.display = 'block';
+}
+
+async function runCSVAnalysis() {
+  const ent = document.getElementById('tryit-entity').value;
+  const dat = document.getElementById('tryit-date').value;
+  const cat = document.getElementById('tryit-category').value;
+  const val = document.getElementById('tryit-value').value;
+  const anchor = document.getElementById('tryit-anchor').value;
+
+  if (!ent || !dat || !cat || !anchor) {
+    showTryitError('Please select all required columns and an anchor category.');
+    return;
+  }
+
+  const btn = document.getElementById('tryit-run');
+  btn.disabled = true;
+  btn.querySelector('svg').style.display = 'none';
+  btn.childNodes[btn.childNodes.length - 1].textContent = ' Analyzing\u2026';
+  document.getElementById('tryit-error').style.display = 'none';
+  document.getElementById('tryit-results').style.display = 'none';
+
+  try {
+    // Ensure DuckDB is ready
+    if (!duckDBReady) {
+      await initDuckDB();
+      if (!duckDBReady) throw new Error('DuckDB failed to initialize');
+    }
+
+    // Load CSV into DuckDB in-memory
+    await conn.query('DROP TABLE IF EXISTS uploaded_data');
+    const bytes = new TextEncoder().encode(csvRawText);
+    await db.registerFileBuffer('uploaded.csv', bytes);
+    await conn.query("CREATE TABLE uploaded_data AS SELECT * FROM read_csv_auto('uploaded.csv')");
+
+    // Validate data
+    const cntR = await conn.query('SELECT COUNT(*) AS c FROM uploaded_data');
+    const rowCount = Number(cntR.toArray()[0].toJSON().c);
+    if (rowCount < 10) throw new Error('Not enough data (' + rowCount + ' rows). TD analysis works best with 100+ transactions across multiple entities.');
+
+    const entR = await conn.query('SELECT COUNT(DISTINCT "' + ent + '") AS c FROM uploaded_data');
+    const entCount = Number(entR.toArray()[0].toJSON().c);
+    if (entCount < 2) throw new Error('Only one entity found. TD analysis requires multiple entities to show patterns reliably.');
+
+    const esc = anchor.replace(/'/g, "''");
+    const valExpr = val ? 'TRY_CAST("' + val + '" AS DOUBLE)' : '1';
+
+    // Stage distribution query
+    const stageQ = `
+      WITH anchors AS (
+        SELECT "${ent}" AS eid, MIN(TRY_CAST("${dat}" AS DATE)) AS adate
+        FROM uploaded_data WHERE "${cat}" = '${esc}'
+        GROUP BY "${ent}"
+      ),
+      windows AS (
+        SELECT eid, adate, adate - INTERVAL '30 days' AS ws, adate + INTERVAL '90 days' AS we
+        FROM anchors WHERE adate IS NOT NULL
+      ),
+      classified AS (
+        SELECT t."${ent}" AS eid, TRY_CAST(t."${dat}" AS DATE) AS td, t."${cat}" AS tcat, ${valExpr} AS amt,
+        CASE
+          WHEN TRY_CAST(t."${dat}" AS DATE) < w.adate THEN 'Stage 0: Pre-signal'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '30 days' THEN 'Stage 1: Initiation'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '60 days' THEN 'Stage 2: Active'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '90 days' THEN 'Stage 3: Normalization'
+          ELSE 'Stage 4: Post-event'
+        END AS stage
+        FROM uploaded_data t JOIN windows w ON t."${ent}" = w.eid
+        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
+      )
+      SELECT stage AS event_stage, COUNT(*) AS txn_count, COUNT(DISTINCT eid) AS ent_count,
+             ROUND(AVG(amt), 2) AS avg_amt, ROUND(SUM(amt), 2) AS total_amt
+      FROM classified GROUP BY stage ORDER BY stage`;
+
+    const stageRes = await conn.query(stageQ);
+    const stages = stageRes.toArray().map(r => r.toJSON());
+
+    // Top categories per stage
+    const catQ = `
+      WITH anchors AS (
+        SELECT "${ent}" AS eid, MIN(TRY_CAST("${dat}" AS DATE)) AS adate
+        FROM uploaded_data WHERE "${cat}" = '${esc}'
+        GROUP BY "${ent}"
+      ),
+      windows AS (
+        SELECT eid, adate, adate - INTERVAL '30 days' AS ws, adate + INTERVAL '90 days' AS we
+        FROM anchors WHERE adate IS NOT NULL
+      ),
+      classified AS (
+        SELECT t."${ent}" AS eid, TRY_CAST(t."${dat}" AS DATE) AS td, t."${cat}" AS tcat,
+        CASE
+          WHEN TRY_CAST(t."${dat}" AS DATE) < w.adate THEN 'Stage 0: Pre-signal'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '30 days' THEN 'Stage 1: Initiation'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '60 days' THEN 'Stage 2: Active'
+          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '90 days' THEN 'Stage 3: Normalization'
+          ELSE 'Stage 4: Post-event'
+        END AS stage
+        FROM uploaded_data t JOIN windows w ON t."${ent}" = w.eid
+        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
+        WHERE t."${cat}" != '${esc}'
+      ),
+      ranked AS (
+        SELECT stage, tcat, COUNT(*) AS cnt,
+        ROW_NUMBER() OVER (PARTITION BY stage ORDER BY COUNT(*) DESC) AS rn
+        FROM classified GROUP BY stage, tcat
+      )
+      SELECT stage AS event_stage, tcat AS category, cnt
+      FROM ranked WHERE rn <= 3 ORDER BY stage, rn`;
+
+    const catRes = await conn.query(catQ);
+    const topCats = catRes.toArray().map(r => r.toJSON());
+
+    // Drop raw data immediately after aggregation
+    await conn.query('DROP TABLE IF EXISTS uploaded_data');
+    try { await db.dropFile('uploaded.csv'); } catch (_) {}
+
+    displayTryitResults(stages, topCats, rowCount, entCount, anchor, !!val);
+
+  } catch (e) {
+    showTryitError(e.message || 'Analysis failed.');
+    try { await conn.query('DROP TABLE IF EXISTS uploaded_data'); } catch (_) {}
+    try { await db.dropFile('uploaded.csv'); } catch (_) {}
+  }
+
+  btn.disabled = false;
+  btn.querySelector('svg').style.display = '';
+  btn.childNodes[btn.childNodes.length - 1].textContent = ' Run analysis';
+}
+
+function displayTryitResults(stages, topCats, rows, ents, anchor, hasVal) {
+  const vEl = document.getElementById('tryit-verdict');
+  const stageCount = stages.length;
+
+  if (stageCount === 0) {
+    vEl.className = 'tryit-verdict none';
+    vEl.innerHTML = 'No anchor transactions found for <strong>' + anchor + '</strong> \u2014 try a different category.';
+  } else if (stageCount >= 3) {
+    vEl.className = 'tryit-verdict detected';
+    vEl.innerHTML = '<strong>TD pattern detected</strong> \u2014 ' + stageCount + ' stages with data across ' + ents + ' entities';
+  } else {
+    vEl.className = 'tryit-verdict weak';
+    vEl.innerHTML = '<strong>Weak or partial TD pattern</strong> \u2014 only ' + stageCount + ' stage(s) with data. Try a different anchor.';
+  }
+
+  // Chart
+  if (tryitChartInstance) tryitChartInstance.destroy();
+  const stageColors = ['rgba(148,163,184,0.7)', 'rgba(245,158,11,0.7)', 'rgba(239,68,68,0.7)', 'rgba(139,92,246,0.7)', 'rgba(16,185,129,0.7)'];
+  const stageBorders = ['rgba(148,163,184,1)', 'rgba(245,158,11,1)', 'rgba(239,68,68,1)', 'rgba(139,92,246,1)', 'rgba(16,185,129,1)'];
+  const labels = stages.map(s => s.event_stage.replace('Stage ', 'S'));
+  const data = stages.map(s => hasVal ? Number(s.avg_amt) : Number(s.txn_count));
+
+  tryitChartInstance = new Chart(document.getElementById('tryitChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: hasVal ? 'Avg amount' : 'Transaction count',
+        data: data,
+        backgroundColor: stages.map((_, i) => stageColors[i % 5]),
+        borderColor: stages.map((_, i) => stageBorders[i % 5]),
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { font: { family: "'IBM Plex Mono', monospace", size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        y: {
+          ticks: { font: { family: "'IBM Plex Mono', monospace", size: 10 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+
+  // Top categories table
+  let thtml = '<table><tr><th>Stage</th><th>Category</th><th>Count</th></tr>';
+  for (const r of topCats) {
+    thtml += '<tr><td>' + r.event_stage.replace('Stage ', 'S') + '</td><td>' + r.category + '</td><td>' + r.cnt + '</td></tr>';
+  }
+  thtml += '</table>';
+  if (topCats.length === 0) {
+    thtml = '<p style="color:var(--text-muted);font-size:0.85rem">No non-anchor categories found in the event windows.</p>';
+  }
+  document.getElementById('tryit-categories').innerHTML = thtml;
+
+  document.getElementById('tryit-results').style.display = 'block';
+  document.getElementById('tryit-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function tryitResetToAnchor() {
+  document.getElementById('tryit-results').style.display = 'none';
+  document.getElementById('tryit-anchor').value = '';
+  document.getElementById('tryit-anchor-step').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function clearUploadedData() {
+  try { if (conn) await conn.query('DROP TABLE IF EXISTS uploaded_data'); } catch (_) {}
+  try { if (db) await db.dropFile('uploaded.csv'); } catch (_) {}
+  csvRawText = null;
+  document.getElementById('tryit-upload').style.display = 'block';
+  document.getElementById('tryit-preview').style.display = 'none';
+  document.getElementById('tryit-mapping').style.display = 'none';
+  document.getElementById('tryit-anchor-step').style.display = 'none';
+  document.getElementById('tryit-results').style.display = 'none';
+  document.getElementById('tryit-clear-wrap').style.display = 'none';
+  document.getElementById('tryit-error').style.display = 'none';
+  document.getElementById('tryit-file').value = '';
+  if (tryitChartInstance) { tryitChartInstance.destroy(); tryitChartInstance = null; }
+  showTryitNotice('Data cleared. Nothing was stored or transmitted.');
+}
+
+// ── Cleanup handlers ─────────────────────────────────────
+window.addEventListener('beforeunload', () => {
+  try { if (conn) { conn.close(); conn = null; } } catch (_) {}
+  try { if (db) { db.terminate(); db = null; } } catch (_) {}
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && conn) {
+    try { conn.query('DROP TABLE IF EXISTS uploaded_data'); } catch (_) {}
+  }
+});
 </script>
 
 </body>

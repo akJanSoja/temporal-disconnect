@@ -239,6 +239,20 @@ To run locally: `python -m http.server 8080` and open `http://localhost:8080`.
 
 ---
 
+## Security
+
+The "Try it" feature is designed to be verifiably private:
+
+- All analysis runs in DuckDB-WASM inside the visitor's browser
+- A Content Security Policy blocks all outbound data connections
+- No server, no database, no analytics, no cookies
+- Raw data is dropped from memory immediately after analysis
+- Data is also cleared on tab close via beforeunload handler
+- Visitors can verify this by opening their browser's Network tab
+  while uploading — zero outbound requests will appear
+
+---
+
 ## Summary
 
 Temporal Disconnect is not an exotic concept.
