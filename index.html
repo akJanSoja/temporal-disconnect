@@ -1015,6 +1015,260 @@
       border-bottom: 1px solid var(--border);
     }
 
+    /* ── Analysis Steps Animation ────────────────────────────── */
+    .tryit-steps-wrap {
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .tryit-progress {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .tryit-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .tryit-step {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+    .tryit-step:last-child { border-bottom: none; }
+    .tryit-step.active, .tryit-step.done, .tryit-step.failed { opacity: 1; }
+    .tryit-step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--border);
+      color: var(--text-muted);
+      transition: background 0.3s, color 0.3s;
+    }
+    .tryit-step.active .tryit-step-num {
+      background: var(--accent);
+      color: #fff;
+      animation: stepPulse 1.5s ease-in-out infinite;
+    }
+    .tryit-step.done .tryit-step-num {
+      background: #10b981;
+      color: #fff;
+    }
+    .tryit-step.failed .tryit-step-num {
+      background: #ef4444;
+      color: #fff;
+    }
+    @keyframes stepPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(37,99,235,0); }
+    }
+    .tryit-step-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .tryit-step-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+    }
+    .tryit-step-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+    .tryit-step-visual {
+      display: none;
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+    .tryit-step.active .tryit-step-visual,
+    .tryit-step.done .tryit-step-visual,
+    .tryit-step.failed .tryit-step-visual {
+      display: block;
+    }
+    .tryit-step-visual.shimmer {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .tryit-step-completion {
+      display: none;
+      margin-top: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #10b981;
+      font-weight: 600;
+    }
+    .tryit-step.done .tryit-step-completion { display: block; }
+    .tryit-step-completion.fail {
+      color: #ef4444;
+    }
+    .tryit-step.failed .tryit-step-completion { display: block; }
+
+    /* Step 1 mini table */
+    .tryit-mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+    }
+    .tryit-mini-table th {
+      text-align: left;
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+    }
+    .tryit-mini-table td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tryit-mini-table tr.anchor-hit {
+      background: rgba(37,99,235,0.08);
+    }
+    .tryit-mini-table tr.anchor-hit td {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Step 2 window bar */
+    .tryit-window-bar {
+      display: flex;
+      height: 32px;
+      border-radius: 6px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .tryit-window-bar > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.5rem;
+      white-space: nowrap;
+    }
+    .tryit-wb-pre { background: #dbeafe; color: #1e40af; flex: 1; }
+    .tryit-wb-anchor { background: #2563eb; color: #fff; flex: 0.5; }
+    .tryit-wb-post { background: #d1fae5; color: #065f46; flex: 3; }
+    .tryit-wb-out { background: #e5e7eb; color: #6b7280; flex: 1.5; }
+
+    /* Step 2 example rows */
+    .tryit-window-examples {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+    }
+    .tryit-window-examples .inside {
+      color: #10b981;
+      margin-bottom: 0.3rem;
+    }
+    .tryit-window-examples .outside {
+      color: #9ca3af;
+    }
+    .tryit-window-examples .row-label {
+      font-weight: 700;
+      margin-right: 0.25rem;
+    }
+
+    /* Step 3 stage labels */
+    .tryit-stage-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tryit-stage-label {
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .tryit-stage-label.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tryit-stage-label[data-s="0"] { background: rgba(148,163,184,0.2); color: #475569; }
+    .tryit-stage-label[data-s="1"] { background: rgba(245,158,11,0.15); color: #92400e; }
+    .tryit-stage-label[data-s="2"] { background: rgba(239,68,68,0.12); color: #991b1b; }
+    .tryit-stage-label[data-s="3"] { background: rgba(139,92,246,0.12); color: #5b21b6; }
+
+    /* Step 4 top categories */
+    .tryit-top-cats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .tryit-top-cat-row {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .tryit-top-cat-row.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .tryit-top-cat-row .stage-tag {
+      font-weight: 700;
+      margin-right: 0.4rem;
+    }
+    .tryit-step4-verdict {
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .tryit-step4-verdict.visible { opacity: 1; }
+    .tryit-step4-verdict.green { background: #d1fae5; color: #065f46; }
+    .tryit-step4-verdict.amber { background: #fef3c7; color: #92400e; }
+    .tryit-step4-verdict.red { background: #fee2e2; color: #991b1b; }
+
+    /* Results fade-in */
+    #tryit-results.fade-in {
+      animation: fadeInUp 0.3s ease forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* ── Scale Section ────────────────────────────────────────── */
     .scale-grid {
       display: grid;
@@ -1725,6 +1979,51 @@ staged <span class="kw">AS</span> (
     <!-- Error -->
     <div id="tryit-error" class="tryit-error" style="display:none"></div>
 
+    <!-- Analysis Steps Animation -->
+    <div id="tryit-steps-wrap" class="tryit-steps-wrap">
+      <div class="tryit-progress"><div class="tryit-progress-bar" id="tryit-progress-bar"></div></div>
+
+      <div class="tryit-step pending" id="tryit-step-1">
+        <div class="tryit-step-num">1</div>
+        <div class="tryit-step-body">
+          <div class="tryit-step-title">Scan for anchor transactions</div>
+          <p class="tryit-step-desc">Finding rows where the category matches your anchor.</p>
+          <div class="tryit-step-visual shimmer" id="tryit-step1-visual"></div>
+          <div class="tryit-step-completion" id="tryit-step1-done"></div>
+        </div>
+      </div>
+
+      <div class="tryit-step pending" id="tryit-step-2">
+        <div class="tryit-step-num">2</div>
+        <div class="tryit-step-body">
+          <div class="tryit-step-title">Build event windows</div>
+          <p class="tryit-step-desc">Creating &minus;30 to +90 day windows around each anchor.</p>
+          <div class="tryit-step-visual shimmer" id="tryit-step2-visual"></div>
+          <div class="tryit-step-completion" id="tryit-step2-done"></div>
+        </div>
+      </div>
+
+      <div class="tryit-step pending" id="tryit-step-3">
+        <div class="tryit-step-num">3</div>
+        <div class="tryit-step-body">
+          <div class="tryit-step-title">Classify by event stage</div>
+          <p class="tryit-step-desc">Labelling each transaction by its position relative to the anchor.</p>
+          <div class="tryit-step-visual" id="tryit-step3-visual"></div>
+          <div class="tryit-step-completion" id="tryit-step3-done"></div>
+        </div>
+      </div>
+
+      <div class="tryit-step pending" id="tryit-step-4">
+        <div class="tryit-step-num">4</div>
+        <div class="tryit-step-body">
+          <div class="tryit-step-title">Detect the pattern</div>
+          <p class="tryit-step-desc">Checking whether different stages surface different categories.</p>
+          <div class="tryit-step-visual" id="tryit-step4-visual"></div>
+          <div class="tryit-step-completion" id="tryit-step4-done"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Results -->
     <div id="tryit-results" style="display:none">
       <div id="tryit-verdict" class="tryit-verdict"></div>
@@ -2301,6 +2600,67 @@ function onCategoryChange() {
   document.getElementById('tryit-anchor-step').style.display = 'block';
 }
 
+// ── Analysis Animation Helpers ────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runStepWithMinDuration(queryFn, minMs) {
+  if (minMs === undefined) minMs = 400;
+  const start = Date.now();
+  const result = await queryFn();
+  const elapsed = Date.now() - start;
+  if (elapsed < minMs) await sleep(minMs - elapsed);
+  return result;
+}
+
+function resetSteps() {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('tryit-step-' + i);
+    el.className = 'tryit-step pending';
+    el.querySelector('.tryit-step-num').textContent = i;
+    const vis = document.getElementById('tryit-step' + i + '-visual');
+    vis.innerHTML = '';
+    vis.classList.add('shimmer');
+    const done = document.getElementById('tryit-step' + i + '-done');
+    done.textContent = '';
+    done.className = 'tryit-step-completion';
+  }
+  document.getElementById('tryit-progress-bar').style.width = '0%';
+}
+
+function activateStep(n) {
+  const el = document.getElementById('tryit-step-' + n);
+  el.className = 'tryit-step active';
+  el.querySelector('.tryit-step-num').textContent = n;
+  const vis = document.getElementById('tryit-step' + n + '-visual');
+  vis.classList.add('shimmer');
+}
+
+function completeStep(n, text, progressPct) {
+  const el = document.getElementById('tryit-step-' + n);
+  el.className = 'tryit-step done';
+  el.querySelector('.tryit-step-num').innerHTML = '&#10003;';
+  const vis = document.getElementById('tryit-step' + n + '-visual');
+  vis.classList.remove('shimmer');
+  const done = document.getElementById('tryit-step' + n + '-done');
+  done.textContent = text;
+  document.getElementById('tryit-progress-bar').style.width = progressPct + '%';
+}
+
+function failStep(n, msg, hint) {
+  const el = document.getElementById('tryit-step-' + n);
+  el.className = 'tryit-step failed';
+  el.querySelector('.tryit-step-num').innerHTML = '&#10007;';
+  const vis = document.getElementById('tryit-step' + n + '-visual');
+  vis.classList.remove('shimmer');
+  vis.innerHTML = '<div style="color:#991b1b;font-weight:600;">' + msg + '</div>'
+    + (hint ? '<div style="margin-top:0.3rem;color:var(--text-muted);">' + hint + '</div>' : '');
+  const done = document.getElementById('tryit-step' + n + '-done');
+  done.textContent = 'Step failed';
+  done.className = 'tryit-step-completion fail';
+}
+
+function escHTML(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 async function runCSVAnalysis() {
   const ent = document.getElementById('tryit-entity').value;
   const dat = document.getElementById('tryit-date').value;
@@ -2319,6 +2679,19 @@ async function runCSVAnalysis() {
   btn.childNodes[btn.childNodes.length - 1].textContent = ' Analyzing\u2026';
   document.getElementById('tryit-error').style.display = 'none';
   document.getElementById('tryit-results').style.display = 'none';
+  document.getElementById('tryit-results').classList.remove('fade-in');
+
+  // Show and reset steps
+  const stepsWrap = document.getElementById('tryit-steps-wrap');
+  stepsWrap.style.display = 'block';
+  resetSteps();
+  stepsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const esc = anchor.replace(/'/g, "''");
+  const valExpr = val ? 'TRY_CAST("' + val + '" AS DOUBLE)' : '1';
+  let totalRows = 0, anchorCount = 0, windowTxnCount = 0;
+  let stages = [], topCats = [];
+  let currentStep = 0;
 
   try {
     // Ensure DuckDB is ready
@@ -2327,36 +2700,134 @@ async function runCSVAnalysis() {
       if (!duckDBReady) throw new Error('DuckDB failed to initialize');
     }
 
-    // Load CSV into DuckDB in-memory
+    // Load CSV into DuckDB in-memory — clean slate
     await conn.query('DROP TABLE IF EXISTS uploaded_data');
+    await conn.query('DROP TABLE IF EXISTS td_anchors');
+    await conn.query('DROP TABLE IF EXISTS td_windows');
+    await conn.query('DROP TABLE IF EXISTS td_classified');
+    try { await db.dropFile('uploaded.csv'); } catch (_) {}
     const bytes = new TextEncoder().encode(csvRawText);
     await db.registerFileBuffer('uploaded.csv', bytes);
     await conn.query("CREATE TABLE uploaded_data AS SELECT * FROM read_csv_auto('uploaded.csv')");
 
-    // Validate data
-    const cntR = await conn.query('SELECT COUNT(*) AS c FROM uploaded_data');
-    const rowCount = Number(cntR.toArray()[0].toJSON().c);
-    if (rowCount < 10) throw new Error('Not enough data (' + rowCount + ' rows). TD analysis works best with 100+ transactions across multiple entities.');
+    // ── STEP 1: Scan for anchor transactions ──────────────
+    currentStep = 1;
+    activateStep(1);
 
-    const entR = await conn.query('SELECT COUNT(DISTINCT "' + ent + '") AS c FROM uploaded_data');
-    const entCount = Number(entR.toArray()[0].toJSON().c);
-    if (entCount < 2) throw new Error('Only one entity found. TD analysis requires multiple entities to show patterns reliably.');
+    // Get preview rows for the mini table (first 8 rows, mapped columns only)
+    const previewCols = [ent, dat, cat];
+    if (val) previewCols.push(val);
+    // Cast date column to VARCHAR to avoid epoch serialization in Arrow output
+    const colList = previewCols.map(c => c === dat ? 'CAST("' + c + '" AS VARCHAR) AS "' + c + '"' : '"' + c + '"').join(', ');
 
-    const esc = anchor.replace(/'/g, "''");
-    const valExpr = val ? 'TRY_CAST("' + val + '" AS DOUBLE)' : '1';
+    const step1Result = await runStepWithMinDuration(async () => {
+      const prevR = await conn.query('SELECT ' + colList + ' FROM uploaded_data LIMIT 8');
+      const prevRows = prevR.toArray().map(r => r.toJSON());
 
-    // Stage distribution query
-    const stageQ = `
-      WITH anchors AS (
+      const cntR = await conn.query('SELECT COUNT(*) AS c FROM uploaded_data');
+      totalRows = Number(cntR.toArray()[0].toJSON().c);
+      if (totalRows < 10) throw new Error('Not enough data (' + totalRows + ' rows). TD analysis works best with 100+ transactions across multiple entities.');
+
+      const entR = await conn.query('SELECT COUNT(DISTINCT "' + ent + '") AS c FROM uploaded_data');
+      const entCount = Number(entR.toArray()[0].toJSON().c);
+      if (entCount < 2) throw new Error('Only one entity found. TD analysis requires multiple entities to show patterns reliably.');
+
+      await conn.query(`CREATE TABLE td_anchors AS
         SELECT "${ent}" AS eid, MIN(TRY_CAST("${dat}" AS DATE)) AS adate
         FROM uploaded_data WHERE "${cat}" = '${esc}'
-        GROUP BY "${ent}"
-      ),
-      windows AS (
-        SELECT eid, adate, adate - INTERVAL '30 days' AS ws, adate + INTERVAL '90 days' AS we
-        FROM anchors WHERE adate IS NOT NULL
-      ),
-      classified AS (
+        GROUP BY "${ent}"`);
+
+      const acntR = await conn.query('SELECT COUNT(*) AS c FROM td_anchors WHERE adate IS NOT NULL');
+      anchorCount = Number(acntR.toArray()[0].toJSON().c);
+
+      return { prevRows, entCount };
+    }, 800);
+
+    // Build Step 1 visual: mini table with anchor rows highlighted
+    const vis1 = document.getElementById('tryit-step1-visual');
+    let thtml = '<table class="tryit-mini-table"><tr>';
+    for (const c of previewCols) thtml += '<th>' + escHTML(c) + '</th>';
+    thtml += '</tr>';
+    for (const row of step1Result.prevRows) {
+      const isAnchor = String(row[cat]) === anchor;
+      thtml += '<tr' + (isAnchor ? ' class="anchor-hit"' : '') + '>';
+      for (const c of previewCols) thtml += '<td>' + escHTML(row[c] !== null && row[c] !== undefined ? row[c] : '') + '</td>';
+      thtml += '</tr>';
+    }
+    thtml += '</table>';
+    vis1.innerHTML = thtml;
+
+    if (anchorCount === 0) {
+      failStep(1, 'No anchor transactions found for "' + escHTML(anchor) + '".', 'The selected category exists in the data but no valid dates could be parsed. Try a different date or category column.');
+      throw new Error('__step_fail__');
+    }
+    completeStep(1, anchorCount + ' anchor transactions found across ' + totalRows + ' rows', 25);
+
+    // ── STEP 2: Build event windows ──────────────────────
+    currentStep = 2;
+    activateStep(2);
+
+    const step2Result = await runStepWithMinDuration(async () => {
+      await conn.query(`CREATE TABLE td_windows AS
+        SELECT a.eid, a.adate, a.adate - INTERVAL '30 days' AS ws, a.adate + INTERVAL '90 days' AS we
+        FROM td_anchors a WHERE a.adate IS NOT NULL`);
+
+      const wR = await conn.query(`
+        SELECT COUNT(*) AS c FROM uploaded_data t
+        JOIN td_windows w ON t."${ent}" = w.eid
+        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we`);
+      windowTxnCount = Number(wR.toArray()[0].toJSON().c);
+
+      // Get one inside and one outside example (cast date to varchar for display)
+      const insideR = await conn.query(`
+        SELECT t."${ent}" AS eid, CAST(t."${dat}" AS VARCHAR) AS dt, t."${cat}" AS cval
+        FROM uploaded_data t JOIN td_windows w ON t."${ent}" = w.eid
+        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
+        LIMIT 1`);
+      const outsideR = await conn.query(`
+        SELECT t."${ent}" AS eid, CAST(t."${dat}" AS VARCHAR) AS dt, t."${cat}" AS cval
+        FROM uploaded_data t LEFT JOIN td_windows w
+        ON t."${ent}" = w.eid AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
+        WHERE w.eid IS NULL
+        LIMIT 1`);
+      return {
+        inside: insideR.toArray().length ? insideR.toArray()[0].toJSON() : null,
+        outside: outsideR.toArray().length ? outsideR.toArray()[0].toJSON() : null
+      };
+    }, 600);
+
+    // Build Step 2 visual: window bar + example rows
+    const vis2 = document.getElementById('tryit-step2-visual');
+    let v2html = '<div class="tryit-window-bar">'
+      + '<div class="tryit-wb-pre">&minus;30d</div>'
+      + '<div class="tryit-wb-anchor">ANCHOR</div>'
+      + '<div class="tryit-wb-post">+90 days post-anchor</div>'
+      + '<div class="tryit-wb-out">outside</div>'
+      + '</div>';
+    v2html += '<div class="tryit-window-examples">';
+    if (step2Result.inside) {
+      v2html += '<div class="inside"><span class="row-label">\u2713 Inside:</span>'
+        + escHTML(step2Result.inside.eid) + ' \u2014 ' + escHTML(step2Result.inside.dt) + ' \u2014 ' + escHTML(step2Result.inside.cval) + '</div>';
+    }
+    if (step2Result.outside) {
+      v2html += '<div class="outside"><span class="row-label">\u2717 Outside:</span>'
+        + escHTML(step2Result.outside.eid) + ' \u2014 ' + escHTML(step2Result.outside.dt) + ' \u2014 ' + escHTML(step2Result.outside.cval) + '</div>';
+    }
+    v2html += '</div>';
+    vis2.innerHTML = v2html;
+
+    if (windowTxnCount === 0) {
+      failStep(2, 'No transactions fell within the event windows.', 'Dates may not parse correctly, or the anchor entities have no surrounding transactions.');
+      throw new Error('__step_fail__');
+    }
+    completeStep(2, windowTxnCount + ' transactions matched across ' + anchorCount + ' windows', 50);
+
+    // ── STEP 3: Classify by event stage ──────────────────
+    currentStep = 3;
+    activateStep(3);
+
+    await runStepWithMinDuration(async () => {
+      await conn.query(`CREATE TABLE td_classified AS
         SELECT t."${ent}" AS eid, TRY_CAST(t."${dat}" AS DATE) AS td, t."${cat}" AS tcat, ${valExpr} AS amt,
         CASE
           WHEN TRY_CAST(t."${dat}" AS DATE) < w.adate THEN 'Stage 0: Pre-signal'
@@ -2365,60 +2836,124 @@ async function runCSVAnalysis() {
           WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '90 days' THEN 'Stage 3: Normalization'
           ELSE 'Stage 4: Post-event'
         END AS stage
-        FROM uploaded_data t JOIN windows w ON t."${ent}" = w.eid
-        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
-      )
-      SELECT stage AS event_stage, COUNT(*) AS txn_count, COUNT(DISTINCT eid) AS ent_count,
-             ROUND(AVG(amt), 2) AS avg_amt, ROUND(SUM(amt), 2) AS total_amt
-      FROM classified GROUP BY stage ORDER BY stage`;
+        FROM uploaded_data t JOIN td_windows w ON t."${ent}" = w.eid
+        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we`);
+    }, 400);
 
-    const stageRes = await conn.query(stageQ);
-    const stages = stageRes.toArray().map(r => r.toJSON());
+    // Animate stage labels appearing one by one
+    const vis3 = document.getElementById('tryit-step3-visual');
+    const stageLabels = [
+      { s: '0', text: 'S0: Pre-signal \u2014 before anchor' },
+      { s: '1', text: 'S1: Initiation \u2014 anchor + 0\u201330 days' },
+      { s: '2', text: 'S2: Active \u2014 +31\u201360 days' },
+      { s: '3', text: 'S3: Normalization \u2014 +61\u201390 days' }
+    ];
+    vis3.innerHTML = '<div class="tryit-stage-labels">'
+      + stageLabels.map(l => '<span class="tryit-stage-label" data-s="' + l.s + '">' + l.text + '</span>').join('')
+      + '</div>';
+    const labelEls = vis3.querySelectorAll('.tryit-stage-label');
+    for (let i = 0; i < labelEls.length; i++) {
+      await sleep(100);
+      labelEls[i].classList.add('visible');
+    }
 
-    // Top categories per stage
-    const catQ = `
-      WITH anchors AS (
-        SELECT "${ent}" AS eid, MIN(TRY_CAST("${dat}" AS DATE)) AS adate
-        FROM uploaded_data WHERE "${cat}" = '${esc}'
-        GROUP BY "${ent}"
-      ),
-      windows AS (
-        SELECT eid, adate, adate - INTERVAL '30 days' AS ws, adate + INTERVAL '90 days' AS we
-        FROM anchors WHERE adate IS NOT NULL
-      ),
-      classified AS (
-        SELECT t."${ent}" AS eid, TRY_CAST(t."${dat}" AS DATE) AS td, t."${cat}" AS tcat,
-        CASE
-          WHEN TRY_CAST(t."${dat}" AS DATE) < w.adate THEN 'Stage 0: Pre-signal'
-          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '30 days' THEN 'Stage 1: Initiation'
-          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '60 days' THEN 'Stage 2: Active'
-          WHEN TRY_CAST(t."${dat}" AS DATE) <= w.adate + INTERVAL '90 days' THEN 'Stage 3: Normalization'
-          ELSE 'Stage 4: Post-event'
-        END AS stage
-        FROM uploaded_data t JOIN windows w ON t."${ent}" = w.eid
-        AND TRY_CAST(t."${dat}" AS DATE) BETWEEN w.ws AND w.we
-        WHERE t."${cat}" != '${esc}'
-      ),
-      ranked AS (
-        SELECT stage, tcat, COUNT(*) AS cnt,
-        ROW_NUMBER() OVER (PARTITION BY stage ORDER BY COUNT(*) DESC) AS rn
-        FROM classified GROUP BY stage, tcat
-      )
-      SELECT stage AS event_stage, tcat AS category, cnt
-      FROM ranked WHERE rn <= 3 ORDER BY stage, rn`;
+    completeStep(3, 'All ' + windowTxnCount + ' transactions labelled with event stage', 75);
 
-    const catRes = await conn.query(catQ);
-    const topCats = catRes.toArray().map(r => r.toJSON());
+    // ── STEP 4: Detect the pattern ───────────────────────
+    currentStep = 4;
+    activateStep(4);
+
+    const step4Result = await runStepWithMinDuration(async () => {
+      const stageRes = await conn.query(`
+        SELECT stage AS event_stage, COUNT(*) AS txn_count, COUNT(DISTINCT eid) AS ent_count,
+               ROUND(AVG(amt), 2) AS avg_amt, ROUND(SUM(amt), 2) AS total_amt
+        FROM td_classified GROUP BY stage ORDER BY stage`);
+      stages = stageRes.toArray().map(r => r.toJSON());
+
+      const catRes = await conn.query(`
+        WITH ranked AS (
+          SELECT stage, tcat, COUNT(*) AS cnt,
+          ROW_NUMBER() OVER (PARTITION BY stage ORDER BY COUNT(*) DESC) AS rn
+          FROM td_classified WHERE tcat != '${esc}' GROUP BY stage, tcat
+        )
+        SELECT stage AS event_stage, tcat AS category, cnt
+        FROM ranked WHERE rn <= 3 ORDER BY stage, rn`);
+      topCats = catRes.toArray().map(r => r.toJSON());
+
+      return { stages, topCats };
+    }, 400);
+
+    // Animate top categories appearing per stage
+    const vis4 = document.getElementById('tryit-step4-visual');
+    // Get top-1 category per stage for the animation
+    const stageTopMap = {};
+    for (const r of topCats) {
+      const sKey = r.event_stage;
+      if (!stageTopMap[sKey]) stageTopMap[sKey] = r.category;
+    }
+    const catRows = Object.entries(stageTopMap).map(([stage, cval]) =>
+      '<div class="tryit-top-cat-row"><span class="stage-tag">' + escHTML(stage.replace('Stage ', 'S')) + ':</span> ' + escHTML(cval) + '</div>'
+    );
+    // Determine verdict for inline display
+    const stageCount = stages.length;
+    let verdictClass, verdictText;
+    if (stageCount === 0) {
+      verdictClass = 'red';
+      verdictText = 'No pattern \u2014 no stages contain data';
+    } else if (stageCount >= 3) {
+      verdictClass = 'green';
+      verdictText = 'TD detected \u2014 different categories per stage';
+    } else {
+      verdictClass = 'amber';
+      verdictText = 'Weak pattern \u2014 categories overlap across stages';
+    }
+    vis4.innerHTML = '<div class="tryit-top-cats">' + catRows.join('') + '</div>'
+      + '<div class="tryit-step4-verdict ' + verdictClass + '">' + verdictText + '</div>';
+
+    // Stagger category rows
+    const catRowEls = vis4.querySelectorAll('.tryit-top-cat-row');
+    for (let i = 0; i < catRowEls.length; i++) {
+      await sleep(150);
+      catRowEls[i].classList.add('visible');
+    }
+    // Show verdict after a beat
+    await sleep(400);
+    vis4.querySelector('.tryit-step4-verdict').classList.add('visible');
+
+    completeStep(4, verdictText, 100);
 
     // Drop raw data immediately after aggregation
     await conn.query('DROP TABLE IF EXISTS uploaded_data');
+    await conn.query('DROP TABLE IF EXISTS td_anchors');
+    await conn.query('DROP TABLE IF EXISTS td_windows');
+    await conn.query('DROP TABLE IF EXISTS td_classified');
     try { await db.dropFile('uploaded.csv'); } catch (_) {}
 
-    displayTryitResults(stages, topCats, rowCount, entCount, anchor, !!val);
+    // Reveal results with fade-in after a short pause
+    await sleep(600);
+    const entCount = step1Result.entCount;
+    displayTryitResults(stages, topCats, totalRows, entCount, anchor, !!val);
+    const resultsEl = document.getElementById('tryit-results');
+    resultsEl.classList.add('fade-in');
 
   } catch (e) {
-    showTryitError(e.message || 'Analysis failed.');
+    if (e.message !== '__step_fail__') {
+      // Mark the active step as failed with the error message
+      if (currentStep > 0) {
+        const hint = e.message && e.message.includes('date')
+          ? 'Ensure dates are in YYYY-MM-DD or similar format.'
+          : e.message && e.message.includes('entity')
+          ? 'Select a column that groups multiple transactions.'
+          : null;
+        failStep(currentStep, e.message || 'Analysis failed.', hint);
+      } else {
+        showTryitError(e.message || 'Analysis failed.');
+      }
+    }
     try { await conn.query('DROP TABLE IF EXISTS uploaded_data'); } catch (_) {}
+    try { await conn.query('DROP TABLE IF EXISTS td_anchors'); } catch (_) {}
+    try { await conn.query('DROP TABLE IF EXISTS td_windows'); } catch (_) {}
+    try { await conn.query('DROP TABLE IF EXISTS td_classified'); } catch (_) {}
     try { await db.dropFile('uploaded.csv'); } catch (_) {}
   }
 
@@ -2497,6 +3032,8 @@ function displayTryitResults(stages, topCats, rows, ents, anchor, hasVal) {
 
 function tryitResetToAnchor() {
   document.getElementById('tryit-results').style.display = 'none';
+  document.getElementById('tryit-results').classList.remove('fade-in');
+  document.getElementById('tryit-steps-wrap').style.display = 'none';
   document.getElementById('tryit-anchor').value = '';
   document.getElementById('tryit-anchor-step').scrollIntoView({ behavior: 'smooth' });
 }
@@ -2512,6 +3049,8 @@ async function clearUploadedData() {
   document.getElementById('tryit-mapping').style.display = 'none';
   document.getElementById('tryit-anchor-step').style.display = 'none';
   document.getElementById('tryit-results').style.display = 'none';
+  document.getElementById('tryit-results').classList.remove('fade-in');
+  document.getElementById('tryit-steps-wrap').style.display = 'none';
   document.getElementById('tryit-clear-wrap').style.display = 'none';
   document.getElementById('tryit-error').style.display = 'none';
   document.getElementById('tryit-file').value = '';
